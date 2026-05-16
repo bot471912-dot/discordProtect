@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discord Protect — Blacklist</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-loader" id="page-loader">
+      <div class="loader-box">
+        <div class="loader-effect"></div>
+        <img src="https://cdn.discordapp.com/app-icons/1486067182499790958/dffaebaec6ba3f3f93bf9853fc51e863.png?size=128" alt="Bot logo" class="loader-logo" />
+        <div class="loader-copy">
+          <span class="loader-text">Chargement<span class="loader-dots">...</span></span>
+          <span class="loader-subtitle">Récupération des listes blacklist</span>
+        </div>
+        <span class="loader-spinner"></span>
+      </div>
+    </div>
+    <div class="captcha-overlay" id="captcha-overlay">
+      <div class="captcha-box">
+        <div class="captcha-title">Vérification requise</div>
+        <p>Pour accéder à la Blacklist, confirmez que vous n'êtes pas un robot.</p>
+        <div class="captcha-challenge" id="captcha-challenge">Saisissez le code affiché sur les blocs ci-dessous :</div>
+        <div class="captcha-image-grid" id="captcha-image-grid"></div>
+        <div class="captcha-input-row">
+          <input type="text" id="captcha-input" placeholder="Entrez le code" autocomplete="off" maxlength="6" />
+          <button id="captcha-refresh-code" class="button button-secondary captcha-refresh" type="button">Nouveau code</button>
+        </div>
+        <div class="captcha-error" id="captcha-error">Réponse incorrecte, essayez encore.</div>
+        <button id="captcha-submit" class="button button-primary">Valider</button>
+        <button id="captcha-cancel" class="button button-secondary">Annuler</button>
+      </div>
+    </div>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="brand">
+          <div class="logo"><img src="https://cdn.discordapp.com/app-icons/1486067182499790958/dffaebaec6ba3f3f93bf9853fc51e863.png?size=128" alt="Bot icon" class="bot-logo" /></div>
+          <div>
+            <p class="eyebrow">Blacklist</p>
+            <h1>Gestion centralisée des menaces</h1>
+          </div>
+        </div>
+        <nav class="nav-links">
+          <a href="index.html">Accueil</a>
+          <a href="blacklist.html" class="active">Blacklist</a>
+          <a href="index.html#features">Fonctionnalités</a>
+          <a href="index.html#faq">FAQ</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="section glass-section blacklist-section">
+          <div class="section-header">
+            <p class="eyebrow">Tableau de menace</p>
+            <h2>Liste d'utilisateurs blacklistés</h2>
+            <p>Suivez en temps réel les comptes bloqués, les raisons et le niveau de danger.</p>
+          </div>
+          <div class="refresh-row">
+            <button id="refresh-button" class="refresh-button" type="button" data-source="https://raw.githubusercontent.com/bot471912-dot/discordProtect/refs/heads/main/blacklist.txt">
+              <span class="refresh-icon"></span>
+              Rafraîchir
+            </button>
+            <p class="update-meta">Dernière mise à jour : il y a 2 secondes</p>
+          </div>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID Discord</th>
+                  <th>Utilisateur</th>
+                  <th>Raison</th>
+                  <th>Date</th>
+                  <th>Statut danger</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                <tr>
+                  <td class="danger">500 Réessayez</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div>
+          <p class="footer-brand">Discord Protect</p>
+          <p>Protection blacklist haut de gamme pour votre serveur Discord.</p>
+        </div>
+        <div class="footer-links">
+          <a href="index.html#support">Discord Support</a>
+          <a href="index.html">Documentation</a>
+          <a href="index.html">GitHub</a>
+          <a href="index.html">Conditions d'utilisation</a>
+        </div>
+      </footer>
+    </div>
+    <script src="scripts.js"></script>
+  </body>
+</html>
