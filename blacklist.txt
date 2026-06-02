@@ -5,12 +5,11 @@
     "reason": "Installation sans permission et raid",
     "date": "16/05/2026 actif depuis 2025",
     "status": "Danger moyen"
-  }
-
+  },
   {
     "id": "901485873084907560",
     "user": "allamadrid12",
-    "reason": "Givway de scam",
+    "reason": "Giveaway de scam",
     "date": "02/06/2026",
     "status": "Danger moyen"
   }
