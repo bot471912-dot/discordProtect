@@ -6,8 +6,7 @@
     "date": "16/05/2026 actif depuis 2025",
     "status": "Danger moyen"
   }
-]
-[
+
   {
     "id": "901485873084907560",
     "user": "allamadrid12",
