@@ -7,3 +7,12 @@
     "status": "Danger moyen"
   }
 ]
+[
+  {
+    "id": "901485873084907560",
+    "user": "allamadrid12",
+    "reason": "Givway de scam",
+    "date": "02/06/2026",
+    "status": "Danger moyen"
+  }
+]
