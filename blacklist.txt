@@ -5,6 +5,27 @@
     "reason": "Installation sans permission et raid",
     "date": "16/05/2026 actif depuis 2025",
     "status": "Danger moyen"
+  },  
+{
+    "id": "1392159664560406741",
+    "user": "kryntttt",
+    "reason": "Exploit pour ping",
+    "date": "13/06/2026",
+    "status": "Danger moyen"
+  },
+  {
+    "id": "1273278531929116802",
+    "user": "innconu",
+    "reason": " Incite à raid des serveurs",
+    "date": "13/06/2026",
+    "status": "Danger moyen"
+  }, 
+{
+    "id": "1392159664560406741",
+    "user": "innconu",
+    "reason": "Harcèlement, rabaissement",
+    "date": "13/06/2026",
+    "status": "Danger faible"
   },
   {
     "id": "901485873084907560",
