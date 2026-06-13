@@ -11,7 +11,7 @@
     "user": "kryntttt",
     "reason": "Exploit pour ping",
     "date": "13/06/2026",
-    "status": "Danger moyen"
+    "status": "Danger faible"
   },
   {
     "id": "1273278531929116802",
