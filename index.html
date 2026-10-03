@@ -1,197 +1,321 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Discord Protect — Sécurisez votre serveur Discord</title>
-    <link rel="stylesheet" href="styles.css" />
-  <meta name="description" content="Système avancé de blacklist, anti-raid et protection automatique pour défendre votre communauté contre les utilisateurs dangereux, raids et bots malveillants.">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#25070b">
+	<meta name="description" content="Discord Protect aide à protéger les serveurs Discord et filtre les publicités et domaines de tracking dans Chrome.">
+	<link rel="icon" type="image/png" href="extension/assets/discord-protect-logo.png">
+	<meta property="og:image" content="https://bot471912-dot.github.io/discordProtect/extension/assets/discord-protect-logo.png">
+	<title>Discord Protect | La sécurité, sans angle mort</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = { theme: { extend: { fontFamily: { display: ['Space Grotesk', 'sans-serif'], body: ['DM Sans', 'sans-serif'] } } } };
+	</script>
+	<style>
+		:root {
+			color-scheme: dark;
+			--ink: #080808;
+			--ink-soft: #141414;
+			--red: #c82d35;
+			--gold: #dca943;
+			--gold-light: #f2d28b;
+			--paper: #f5f3f1;
+			--muted: #aaa7a4;
+			--line: rgba(255, 255, 255, .12);
+			font-family: "DM Sans", sans-serif;
+			background: var(--ink);
+			color: var(--paper);
+			font-synthesis: none;
+			scroll-behavior: smooth;
+		}
+		* { box-sizing: border-box; }
+		body { margin: 0; min-width: 320px; background: var(--ink); }
+		a { color: inherit; }
+		button, a { -webkit-tap-highlight-color: transparent; }
+		:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 4px; }
+		.site-shell { overflow: hidden; background: radial-gradient(ellipse at 12% 9%, rgba(151, 24, 32, .34), transparent 28%), radial-gradient(ellipse at 90% 9%, rgba(125, 97, 31, .14), transparent 29%), var(--ink); }
+		.wrap { width: min(1190px, calc(100% - 48px)); margin-inline: auto; }
+		.topbar { position: relative; z-index: 2; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(8, 8, 8, .84); }
+		.topbar-inner { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand title action" "nav nav nav"; align-items: center; gap: 13px 24px; padding-block: 17px 14px; }
+		.brand { grid-area: brand; display: inline-flex; align-items: center; gap: 15px; text-decoration: none; min-width: 0; }
+		.brand img { width: 54px; height: 60px; flex: 0 0 auto; padding: 0; border-radius: 0; background: transparent; object-fit: contain; filter: drop-shadow(0 5px 14px rgba(197, 34, 43, .22)); }
+		.brand-copy { display: block; min-width: 0; }
+		.brand-name { display: inline-block; padding: 5px 12px; border-radius: 20px; background: rgba(164, 31, 38, .23); color: #e2787e; font: 600 10px "DM Sans", sans-serif; letter-spacing: 2px; }
+		.brand-caption { display: none; }
+		.site-title { grid-area: title; max-width: 710px; margin: 0; color: #f5f3f1; font: 700 46px/1.06 "Space Grotesk", sans-serif; }
+		.nav-links { grid-area: nav; display: flex; align-items: center; gap: 25px; color: #aaa7a4; font-size: 12px; }
+		.nav-links a { text-decoration: none; transition: color .18s ease; }
+		.nav-links a:hover { color: var(--gold-light); }
+		.topbar-inner > .button { grid-area: action; }
+		.button { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 0 20px; border: 1px solid rgba(250, 188, 79, .48); border-radius: 24px; background: linear-gradient(105deg, #ed3544, #d84b36 50%, #e5ad43); color: #170b08; font-size: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 7px 24px rgba(211, 50, 53, .17); transition: box-shadow .2s ease, transform .2s ease, background .2s ease; }
+		.button:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(229, 93, 62, .32); }
+		.button.secondary { border-color: rgba(255,255,255,.14); background: #171717; color: #f3f1ef; box-shadow: none; }
+		.button.small { min-height: 37px; padding-inline: 14px; font-size: 11px; }
+		.button[aria-disabled="true"] { opacity: .74; }
+		.hero { position: relative; padding: 35px 0 49px; }
+		.hero::before { position: absolute; inset: 0; content: ""; pointer-events: none; background: radial-gradient(ellipse at 82% 43%, rgba(114, 89, 30, .10), transparent 36%); }
+		.hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(320px, .88fr); align-items: center; gap: 48px; }
+		.eyebrow { display: flex; align-items: center; gap: 10px; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+		.eyebrow::before { width: 27px; height: 1px; background: var(--gold); content: ""; }
+		h1, h2, h3, p { margin-top: 0; }
+		h1, h2, h3 { font-family: "Space Grotesk", sans-serif; }
+		.hero h2 { max-width: 620px; margin: 0 0 15px; font-size: clamp(33px, 4vw, 44px); line-height: 1.12; font-weight: 700; }
+		.hero-copy { max-width: 565px; color: #d5c6b8; font-size: 15px; line-height: 1.8; }
+		.hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 27px; }
+		.hero-note { margin: 15px 0 0; color: #92908e; font-size: 10px; }
+		.hero-visual { position: relative; padding: 26px; border: 1px solid rgba(174, 56, 56, .31); border-radius: 24px; background: linear-gradient(145deg, #171717, #111 68%, #17140e); box-shadow: 0 14px 50px rgba(0,0,0,.4), 0 0 34px rgba(118,26,31,.12); }
+		.hero-status-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-bottom: 20px; color: #c9c7c4; font-size: 12px; }
+		.online-pill { padding: 7px 13px; border-radius: 18px; background: rgba(56, 145, 77, .28); color: #a4e0ae; font-size: 11px; font-weight: 700; }
+		.hero-visual h3 { margin: 0 0 8px; font-size: 19px; }
+		.blacklist-description { margin: 0 0 20px; color: #bbb8b4; font-size: 13px; line-height: 1.65; }
+		.hero-threat { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 16px 18px; border: 1px solid rgba(255,255,255,.10); border-radius: 16px; background: rgba(255,255,255,.035); font-size: 12px; font-weight: 700; }
+		.hero-threat strong { color: #e6a1a1; font-size: 11px; text-align: right; }
+		.hero-meta { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 16px; color: #aaa7a4; font-size: 11px; }
+		.hero-meta span { overflow-wrap: anywhere; }
+		.hero-meta strong { display: block; margin-bottom: 4px; color: #dedbd7; font-size: 10px; font-weight: 500; }
+		.hero-rule { margin-top: 28px; border-top: 1px solid var(--line); }
+		.section { padding: 65px 0; border-top: 1px solid rgba(255,255,255,.07); }
+		.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 28px; margin-bottom: 30px; }
+		.section-heading h2 { max-width: 700px; margin: 9px 0 0; font-size: clamp(29px, 4vw, 42px); line-height: 1.12; }
+		.section-heading > p { max-width: 380px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+		.feature-frame { padding: 27px; border: 1px solid rgba(255,255,255,.09); border-radius: 22px; background: rgba(5,5,5,.78); box-shadow: 0 0 42px rgba(116,22,28,.08); }
+		.feature-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+		.feature { min-height: 168px; padding: 20px 22px; border: 1px solid rgba(255,255,255,.10); border-radius: 17px; background: #111; transition: border-color .2s ease, background .2s ease, transform .2s ease; }
+		.feature:hover { transform: translateY(-2px); border-color: rgba(218,169,67,.32); background: #151313; }
+		.feature-icon { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 15px; border-radius: 15px; background: rgba(171,35,43,.20); color: #f4f1ed; font: 600 21px "Space Grotesk", sans-serif; }
+		.feature h3 { margin: 0 0 8px; font-size: 17px; }
+		.feature p { max-width: 390px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+		.stats-band { position: relative; padding: 7px 0 58px; }
+		.stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow: hidden; border: 1px solid rgba(255,255,255,.09); border-radius: 16px; background: #101010; }
+		.stat { padding: 22px 26px; border-right: 1px solid rgba(255,255,255,.10); text-align: center; }
+		.stat:first-child { padding-left: 0; }
+		.stat:last-child { border: 0; }
+		.stat strong { display: block; color: #f2eeea; font: 700 36px "Space Grotesk", sans-serif; }
+		.stat span { display: block; margin-top: 5px; color: #aaa7a4; font-size: 11px; }
+		.demo-note { margin: 15px 0 0; color: #8f8b87; font-size: 10px; }
+		.threat-section { background: linear-gradient(180deg, rgba(255,255,255,.018), transparent); }
+		.threat-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 13px; }
+		.feed-status { display: inline-flex; align-items: center; gap: 8px; color: #e5d9c9; font-size: 11px; }
+		.feed-status::before { width: 7px; height: 7px; border-radius: 50%; background: #e2b754; content: ""; }
+		.extension-state { color: var(--muted); font-size: 11px; }
+		.extension-state.connected { color: #80dda7; }
+		.table-wrap { overflow-x: auto; border: 1px solid var(--line); }
+		.threat-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+		.threat-table th { padding: 13px 16px; background: rgba(229,188,99,.08); color: var(--gold-light); font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
+		.threat-table td { padding: 15px 16px; border-top: 1px solid rgba(229,188,99,.14); color: #eadfd1; white-space: nowrap; }
+		.threat-table tbody tr:hover { background: rgba(255,255,255,.025); }
+		.risk { display: inline-flex; align-items: center; gap: 7px; }
+		.risk::before { width: 6px; height: 6px; border-radius: 50%; background: #e6b85d; content: ""; }
+		.risk.high::before { background: #e86b65; }
+		.risk.low::before { background: #7ccf9f; }
+		.faq-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px; }
+		.faq-list details { padding: 0 18px; border: 1px solid rgba(255,255,255,.10); border-radius: 14px; background: #111; }
+		.faq-list summary { position: relative; padding: 19px 30px 19px 0; cursor: pointer; list-style: none; font: 600 14px "Space Grotesk", sans-serif; }
+		.faq-list summary::-webkit-details-marker { display: none; }
+		.faq-list summary::after { position: absolute; right: 4px; color: var(--gold); content: "+"; font: 400 22px "DM Sans", sans-serif; }
+		.faq-list details[open] summary::after { content: "−"; }
+		.faq-list details p { max-width: 760px; margin: -3px 0 20px; color: var(--muted); font-size: 12px; line-height: 1.75; }
+		.closing { display: flex; justify-content: space-between; align-items: center; gap: 28px; padding: 38px 0; border-block: 1px solid var(--line); }
+		.closing h2 { margin: 0; font-size: 26px; }
+		.closing p { margin: 7px 0 0; color: var(--muted); font-size: 12px; }
+		footer { padding: 29px 0 36px; color: #b6a597; font-size: 10px; }
+		.footer-top { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+		.footer-links { display: flex; flex-wrap: wrap; gap: 19px; }
+		.footer-links a { text-decoration: none; }
+		.footer-links a:hover { color: var(--gold-light); }
+		.legal-details { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 21px; }
+		.legal-details details { max-width: 480px; }
+		.legal-details summary { cursor: pointer; color: #d7c5ad; }
+		.legal-details p { margin: 8px 0 0; line-height: 1.6; }
+		.toast { position: fixed; z-index: 5; right: 20px; bottom: 20px; max-width: min(360px, calc(100vw - 40px)); padding: 13px 16px; border: 1px solid var(--gold); background: #390c12; color: var(--paper); font-size: 12px; box-shadow: 0 12px 32px rgba(0,0,0,.35); }
+		.toast[hidden] { display: none; }
+		@keyframes rise-in { from { opacity: 0; transform: translateY(13px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+		@media (max-width: 760px) {
+			.wrap { width: min(100% - 34px, 600px); }
+			.topbar-inner { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand action" "title title" "nav nav"; gap: 10px 12px; padding-block: 12px; }
+			.nav-links { gap: 18px; overflow-x: auto; padding: 3px 0; }
+			.brand img { width: 46px; height: 51px; }
+			.site-title { max-width: 100%; font-size: 32px; }
+			.hero { padding: 34px 0 41px; }
+			.hero-grid { grid-template-columns: 1fr; gap: 25px; }
+			.hero h2 { max-width: 560px; font-size: 34px; }
+			.hero-copy { font-size: 14px; }
+			.hero-visual { padding: 20px; }
+			.section { padding: 61px 0; }
+			.section-heading { display: block; }
+			.section-heading > p { margin-top: 14px; }
+			.feature-frame { padding: 17px; border-radius: 17px; }
+			.feature { min-height: 160px; padding: 17px; }
+			.stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+			.stat, .stat:first-child { padding: 16px 10px; border-right: 1px solid rgba(255,255,255,.10); border-bottom: 1px solid rgba(255,255,255,.10); }
+			.stat:nth-child(2n) { border-right: 0; }
+			.stat:nth-last-child(-n+2) { border-bottom: 0; }
+			.stat strong { font-size: 30px; }
+			.faq-list { grid-template-columns: 1fr; }
+			.threat-toolbar { align-items: flex-start; flex-direction: column; }
+			.closing, .footer-top { align-items: flex-start; flex-direction: column; }
+			.closing h2 { font-size: 23px; }
+			.footer-links { gap: 14px; }
+		}
+		@media (max-width: 420px) {
+			.wrap { width: calc(100% - 28px); }
+			.brand-name { font-size: 9px; }
+			.topbar .button { min-height: 36px; padding-inline: 11px; font-size: 10px; }
+			.feature-grid { grid-template-columns: 1fr; }
+			.feature { min-height: 0; }
+			.hero-actions .button { flex: 1 1 100%; }
+			.threat-table th, .threat-table td { padding-inline: 11px; }
+		}
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<div class="site-shell">
+		<header class="topbar">
+			<div class="wrap topbar-inner">
+				<a class="brand" href="#top" aria-label="Discord Protect, accueil">
+					<img src="extension/assets/discord-protect-logo.png" alt="">
+					<span class="brand-copy"><span class="brand-name">DISCORD PROTECT</span></span>
+				</a>
+				<h1 class="site-title">Sécurisez votre serveur Discord</h1>
+				<nav class="nav-links" aria-label="Navigation principale">
+					<a href="#top">Accueil</a>
+					<a href="#threats">Blacklist</a>
+					<a href="#features">Fonctionnalités</a>
+					<a href="test-bloqueur.html">Test bloqueur</a>
+					<a href="#faq">FAQ</a>
+				</nav>
+				<a class="button small configured-link" data-config="botInviteUrl" href="#connect">Ajouter le bot <span aria-hidden="true">↗</span></a>
+			</div>
+		</header>
 
-    <!-- Embed Discord -->
-    <meta property="og:title" content="Discord Protect — Sécurisez votre serveur Discord">
+		<main id="top">
+			<section class="hero">
+				<div class="wrap">
+					<div class="hero-grid">
+						<div>
+							<p class="eyebrow">CYBERSÉCURITÉ PREMIUM</p>
+							<h2>Protection automatisée et détection intelligente</h2>
+							<p class="hero-copy">Une modération attentive contre les raids et le spam, accompagnée d’une extension Chrome qui filtre des publicités intrusives et des domaines de tracking.</p>
+							<div class="hero-actions">
+								<a class="button configured-link" data-config="extensionStoreUrl" href="#connect">Télécharger l’extension <span aria-hidden="true">↓</span></a>
+								<a class="button secondary configured-link" data-config="botInviteUrl" href="#connect">Ajouter le bot <span aria-hidden="true">↗</span></a>
+							</div>
+							<p class="hero-note">Le filtrage navigateur s’exécute localement. Aucun historique de navigation n’est transmis au site.</p>
+						</div>
+						<article class="hero-visual" aria-label="Aperçu de la blacklist">
+							<div class="hero-status-row"><span>Protection active</span><span class="online-pill">En ligne</span></div>
+							<h3>Blacklist en direct</h3>
+							<p class="blacklist-description">Exemple de menace bloquée avec statut, raison et date.</p>
+							<div class="hero-threat"><span>DeltaPilot260</span><strong>Danger moyen</strong></div>
+							<div class="hero-meta"><span><strong>ID</strong>1447290974509469799</span><span><strong>Signalement</strong>Raid et spam</span><span><strong>Date</strong>16/05/2026</span><span><strong>Serveurs surveillés</strong>10 · exemple</span></div>
+						</article>
+					</div>
+					<div class="hero-rule"></div>
+				</div>
+			</section>
 
-    <meta property="og:description" content="Système avancé de blacklist, anti-raid et protection automatique pour défendre votre communauté contre les utilisateurs dangereux, raids et bots malveillants.">
+			<section class="section" id="features">
+				<div class="wrap">
+					<div class="feature-frame">
+						<div class="section-heading">
+							<div><p class="eyebrow">BLACKLIST GLOBALE</p><h2>Protection automatisée et détection intelligente</h2></div>
+							<p>Des outils de modération pour réduire les raids, le spam et les liens dangereux tout en gardant les décisions visibles.</p>
+						</div>
+						<div class="feature-grid">
+							<article class="feature"><span class="feature-icon" aria-hidden="true">◈</span><h3>Anti Raid</h3><p>Neutralisation des attaques coordonnées et des vagues de comptes.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">×</span><h3>Anti Spam</h3><p>Filtrage des messages répétitifs et des liens malveillants.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">≡</span><h3>Blacklist automatique</h3><p>Ajout des comptes suspects après examen des signalements.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">▤</span><h3>Logs sécurité</h3><p>Historique lisible des incidents et des actions de modération.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">✦</span><h3>Détection assistée</h3><p>Analyse des signaux suspects pour aider les modérateurs à décider.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">↗</span><h3>Liens dangereux</h3><p>Filtrage proactif des domaines connus pour leurs risques.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">×</span><h3>Popups cookies</h3><p>Suppression des bandeaux et overlays cookies reconnus, dont les éléments de type popup backdrop.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">!</span><h3>Système d’alertes</h3><p>Notifications quand une menace demande une action rapide.</p></article>
+							<article class="feature"><span class="feature-icon" aria-hidden="true">◉</span><h3>Sécurité temps réel</h3><p>Visibilité sur l’état de protection du navigateur et du serveur.</p></article>
+						</div>
+					</div>
+				</div>
+			</section>
 
-    <meta property="og:image" content="https://github.com/bot471912-dot/discordProtect/raw/refs/heads/main/icone">
+			<section class="stats-band" aria-labelledby="stats-title">
+				<div class="wrap">
+					<h2 class="sr-only" id="stats-title">Statistiques de protection</h2>
+					<div class="stats-grid">
+						<div class="stat"><strong data-count="10">0</strong><span>Serveurs protégés</span></div>
+						<div class="stat"><strong data-count="45">0</strong><span>Utilisateurs bloqués</span></div>
+						<div class="stat"><strong data-count="17">0</strong><span>Raids stoppés</span></div>
+						<div class="stat"><strong data-count="89" data-suffix="%">0</strong><span>Disponibilité du bot · exemple</span></div>
+					</div>
+					<p class="demo-note">Chiffres de démonstration, à remplacer par des statistiques vérifiées avant publication.</p>
+				</div>
+			</section>
 
-    <meta property="og:url" content="https://bot471912-dot.github.io/discordProtect/">
+			<section class="section threat-section" id="threats">
+				<div class="wrap">
+					<div class="section-heading">
+						<div><p class="eyebrow">VEILLE COMMUNAUTAIRE</p><h2>Menaces récemment signalées</h2></div>
+						<p>Exemple d’interface. Les noms et niveaux ci-dessous sont fictifs; aucun flux de menaces réel n’est connecté.</p>
+					</div>
+					<div class="threat-toolbar">
+						<span class="feed-status">Flux de démonstration</span>
+						<span class="extension-state" id="extension-state" role="status" aria-live="polite">Extension non détectée</span>
+					</div>
+					<div class="table-wrap">
+						<table class="threat-table">
+							<thead><tr><th>Signalement</th><th>Risque</th><th>Origine</th><th>État</th></tr></thead>
+							<tbody>
+								<tr><td>DeltaPilot260</td><td><span class="risk">Moyen</span></td><td>Spam de liens</td><td>Bloqué · exemple</td></tr>
+								<tr><td>NightHarbor</td><td><span class="risk high">Élevé</span></td><td>Vague de comptes</td><td>Examen · exemple</td></tr>
+								<tr><td>PixelCinder</td><td><span class="risk low">Faible</span></td><td>Domaine suspect</td><td>Filtré · exemple</td></tr>
+							</tbody>
+						</table>
+					</div>
+					<p class="demo-note" id="extension-count">Installez l’extension pour afficher ici son compteur local du jour.</p>
+				</div>
+			</section>
 
-    <meta property="og:type" content="website">
+			<section class="section" id="faq">
+				<div class="wrap">
+					<div class="section-heading"><div><p class="eyebrow">QUESTIONS FRÉQUENTES</p><h2>Avant de confier la garde.</h2></div></div>
+					<div class="faq-list">
+						<details><summary>Que bloque l’extension Chrome ?</summary><p>La version fournie bloque quelques domaines publicitaires et de tracking via les règles réseau de Chrome, retire certains emplacements publicitaires et masque les popups de cookies reconnus, y compris leur backdrop. Elle ne supprime pas les cookies déjà enregistrés et ne modifie pas le choix de consentement sur le site.</p></details>
+						<details><summary>Mes données de navigation sont-elles envoyées ?</summary><p>Non, le code fourni conserve son compteur dans le stockage local de l’extension. Le site échange uniquement un signal de présence, l’état des protections et ce compteur avec une extension active sur cette page.</p></details>
+						<details><summary>Le tableau des menaces est-il en direct ?</summary><p>Non. Il s’agit de données d’exemple. Un flux réel exige un service backend, des règles de modération, une politique de confidentialité et une protection contre l’exposition de données personnelles.</p></details>
+						<details><summary>Comment connecter mon bot Discord ?</summary><p>Renseignez l’URL d’invitation OAuth2 de votre application dans la configuration de <code>script.js</code>. Vérifiez les permissions demandées avant de partager le lien.</p></details>
+					</div>
+				</div>
+			</section>
 
-    <meta name="theme-color" content="#5865F2">
+			<section class="wrap closing" id="connect">
+				<div><h2>La protection commence par une configuration claire.</h2><p>Connectez le bot et installez l’extension selon vos besoins.</p></div>
+				<div class="flex flex-wrap gap-2">
+					<a class="button configured-link" data-config="botInviteUrl" href="#connect">Ajouter le bot</a>
+					<a class="button secondary configured-link" data-config="extensionStoreUrl" href="#connect">Installer Chrome</a>
+				</div>
+			</section>
+		</main>
 
-  </head>
-  <body>
-    <div class="page-loader" id="page-loader">
-      <div class="loader-box">
-        <div class="loader-effect"></div>
-        <img src="https://github.com/bot471912-dot/discordProtect/raw/refs/heads/main/icone" alt="Bot logo" class="loader-logo" />
-        <div class="loader-copy">
-          <span class="loader-text">Chargement<span class="loader-dots">...</span></span>
-          <span class="loader-subtitle">Initialisation des assets</span>
-        </div>
-        <span class="loader-spinner"></span>
-      </div>
-    </div>
-    <div class="page-shell">
-      <header class="site-header">
-        <div class="brand">
-          <div class="logo"><img src="https://github.com/bot471912-dot/discordProtect/raw/refs/heads/main/icone" alt="Bot icon" class="bot-logo" /></div>
-          <div>
-            <p class="eyebrow">Discord Protect</p>
-            <h1>Sécurisez votre serveur Discord</h1>
-          </div>
-        </div>
-        <nav class="nav-links">
-          <a href="index.html">Accueil</a>
-          <a href="blacklist.html" class="active">Blacklist</a>
-          <a href="#features">Fonctionnalités</a>
-          <a href="#faq">FAQ</a>
-        </nav>
-      </header>
-
-      <main>
-        <section class="hero">
-          <div class="hero-copy">
-            <span class="badge">Cybersécurité premium</span>
-            <h2>Discord Protect — Sécurisez votre serveur Discord</h2>
-            <p>Système avancé de blacklist, anti-raid et protection automatique pour défendre votre communauté contre les utilisateurs dangereux, raids et bots malveillants.</p>
-            <div class="hero-actions">
-              <a href="https://discord.com/oauth2/authorize?client_id=1486067182499790958&scope=applications.commands%20bot&permissions=8&redirect_uri=https%3A%2F%2Fbot471912-dot.github.io%2FdiscordProtect%2Findex&response_type=code" class="button button-primary">Ajouter le Bot</a>
-              <a href="https://discord.gg/YDreV5cxR8" class="button button-secondary">Support Discord</a>
-            </div>
-          </div>
-          <div class="hero-panel">
-            <div class="panel-header">
-              <span>Protection active</span>
-              <span class="status online">En ligne</span>
-            </div>
-            <div class="panel-card">
-              <h3>Blacklist en direct</h3>
-              <p>Liste des menaces blockées avec statut danger, raison et date.</p>
-              <div class="panel-entry">
-                <span class="entry-name">DeltaPilot260</span>
-                <span class="entry-status warning">Danger moyen</span>
-              </div>
-              <div class="panel-footer">
-                <span>ID: 1447290974509469799</span>
-                <span>Raid et spam</span>
-                <span>16/05/2026</span>
-                <span>Serveurs surveillés:10</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="features" class="section glass-section">
-          <div class="section-header">
-            <p class="eyebrow">Blacklist globale</p>
-            <h2>Protection automatisée et détection intelligente</h2>
-            <p>Gardez votre serveur invulnérable avec un système de défense qui bloque instantanément les raids, les bots malveillants et les utilisateurs à risque.</p>
-          </div>
-          <div class="feature-grid">
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/shield.png" alt="Anti Raid" class="feature-icon-img" /></div>
-              <h3>Anti Raid</h3>
-              <p>Neutralisation instantanée des attaques coordonnées.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/cancel.png" alt="Anti Spam" class="feature-icon-img" /></div>
-              <h3>Anti Spam</h3>
-              <p>Filtrage intelligent des messages et liens malveillants.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/stack.png" alt="Blacklist automatique" class="feature-icon-img" /></div>
-              <h3>Blacklist automatique</h3>
-              <p>Ajout dynamique des comptes suspects en temps réel.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/combo-chart.png" alt="Logs sécurité" class="feature-icon-img" /></div>
-              <h3>Logs sécurité</h3>
-              <p>Historique complet des incidents et actions prises.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/artificial-intelligence.png" alt="Détection IA" class="feature-icon-img" /></div>
-              <h3>Détection IA</h3>
-              <p>Analyse comportementale avancée des menaces.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/link.png" alt="Liens dangereux" class="feature-icon-img" /></div>
-              <h3>Liens dangereux</h3>
-              <p>Blocage proactif des URLs malveillantes.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/alarm.png" alt="Système d'alertes" class="feature-icon-img" /></div>
-              <h3>Système d'alertes</h3>
-              <p>Notifications immédiates pour chaque menace détectée.</p>
-            </article>
-            <article class="feature-card">
-              <div class="feature-icon"><img src="https://img.icons8.com/ios-filled/50/ffffff/clock.png" alt="Sécurité temps réel" class="feature-icon-img" /></div>
-              <h3>Sécurité temps réel</h3>
-              <p>Synchronisation globale active 24/7.</p>
-            </article>
-          </div>
-        </section>
-
-        <section id="stats" class="section stats-section">
-          <div class="stat-card">
-            <p class="stat-value">10</p>
-            <p class="stat-label">Serveurs protégés</p>
-          </div>
-          <div class="stat-card">
-            <p class="stat-value">45</p>
-            <p class="stat-label">Utilisateurs bloqués</p>
-          </div>
-          <div class="stat-card">
-            <p class="stat-value">17</p>
-            <p class="stat-label">Raids stoppés jusqu'à maintenant</p>
-          </div>
-          <div class="stat-card">
-            <p class="stat-value">89%</p>
-            <p class="stat-label">Disponibilité du bot</p>
-          </div>
-        </section>
-
-        <section id="faq" class="section glass-section faq-section">
-          <div class="section-header">
-            <p class="eyebrow">FAQ</p>
-            <h2>Questions fréquentes</h2>
-          </div>
-          <div class="faq-grid">
-            <article class="faq-card">
-              <h3>Comment fonctionne la blacklist ?</h3>
-              <p>Discord Protect analyse les comportements suspects, signatures de raid et historiques pour isoler automatiquement les menaces.</p>
-            </article>
-            <article class="faq-card">
-              <h3>Le bot est-il sécurisé ?</h3>
-              <p>Oui. Il utilise des protocoles modernes, chiffrement des données et permissions strictes.</p>
-            </article>
-            <article class="faq-card">
-              <h3>Comment ajouter Protect Bot ?</h3>
-              <p>Cliquez sur Ajouter le Bot, autorisez les permissions de sécurité et laissez le système s'occuper du reste.</p>
-            </article>
-            <article class="faq-card">
-              <h3>Peut-on signaler un utilisateur ?</h3>
-              <p>Oui. Les rapports utilisateurs améliorent la blacklist globale en continu.</p>
-            </article>
-          </div>
-        </section>
-      </main>
-
-      <footer class="site-footer" id="support">
-        <div>
-          <p class="footer-brand">Discord Protect</p>
-          <p>Protection blacklist haut de gamme pour votre serveur Discord.</p>
-        </div>
-        <div class="footer-links">
-          <a href="#">Discord Support</a>
-          <a href="#">Documentation</a>
-          <a href="#">GitHub</a>
-          <a href="./Conditions d'utilisation.html">Conditions d'utilisation</a>
-          <a href="./Politique de Confidentialité.html">Politique de Confidentialité</a>
-        </div>
-      </footer>
-    </div>
-    <script src="scripts.js"></script>
-  </body>
+		<footer class="wrap">
+			<div class="footer-top">
+				<a class="brand" href="#top"><img src="extension/assets/discord-protect-logo.png" alt=""><span class="brand-name">Discord Protect</span></a>
+				<nav class="footer-links" aria-label="Liens légaux et support">
+					<a href="#terms">CGU</a><a href="#privacy">Confidentialité</a><a href="test-bloqueur.html">Test bloqueur</a><a class="configured-link" data-config="supportInviteUrl" href="#connect">Support Discord</a>
+				</nav>
+			</div>
+			<div class="legal-details">
+				<details id="terms"><summary>Conditions d’utilisation · brouillon</summary><p>Ajoutez ici les conditions applicables à votre bot et à votre extension, notamment les limites de service, les règles d’utilisation et les coordonnées de l’éditeur avant toute mise en ligne.</p></details>
+				<details id="privacy"><summary>Politique de confidentialité · brouillon</summary><p>Document à compléter avec les données réellement collectées par votre bot, leur finalité, leur durée de conservation, vos sous-traitants et les modalités d’exercice des droits.</p></details>
+			</div>
+			<p class="demo-note">© <span id="year"></span> Discord Protect · Projet indépendant, non affilié à Discord.</p>
+		</footer>
+	</div>
+	<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+	<script src="script.js" defer></script>
+</body>
 </html>
