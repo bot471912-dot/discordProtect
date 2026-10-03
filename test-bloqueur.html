@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="Comprendre les tests cosmétiques, scripts et DNS d’AdBlockTest, puis lancer le test officiel.">
+  <link rel="icon" type="image/png" href="extension/assets/discord-protect-logo.png">
+  <title>Test du bloqueur | Discord Protect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #080808;
+      --surface: #121212;
+      --surface-raised: #181716;
+      --red: #d94342;
+      --gold: #e2b757;
+      --paper: #f5f3f1;
+      --muted: #aaa7a4;
+      --line: rgba(255,255,255,.12);
+      background: var(--ink);
+      color: var(--paper);
+      font-family: "DM Sans", sans-serif;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body { min-width: 320px; margin: 0; background: radial-gradient(ellipse at 12% 5%, rgba(151,24,32,.32), transparent 31%), radial-gradient(ellipse at 87% 5%, rgba(125,97,31,.13), transparent 29%), var(--ink); }
+    a { color: inherit; }
+    :focus-visible { outline: 2px solid #f2d28b; outline-offset: 4px; }
+    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+    .topbar { border-bottom: 1px solid rgba(255,255,255,.09); background: rgba(8,8,8,.75); }
+    .topbar-inner { min-height: 74px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
+    .brand img { width: 43px; height: 48px; object-fit: contain; }
+    .brand strong { display: block; font: 700 15px "Space Grotesk", sans-serif; }
+    .brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
+    .nav { display: flex; align-items: center; gap: 19px; color: #c9c5c1; font-size: 11px; }
+    .nav a { text-decoration: none; }
+    .nav a:hover { color: var(--gold); }
+    .button { min-height: 43px; display: inline-flex; justify-content: center; align-items: center; gap: 9px; padding: 0 17px; border: 1px solid rgba(244,187,74,.45); border-radius: 24px; background: linear-gradient(105deg,#ed3544,#d84b36 52%,#e5ad43); color: #170b08; font-size: 11px; font-weight: 700; text-decoration: none; box-shadow: 0 8px 24px rgba(211,50,53,.17); transition: transform .2s ease, box-shadow .2s ease; }
+    .button:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(229,93,62,.3); }
+    .button.secondary { border-color: rgba(255,255,255,.16); background: #171717; color: var(--paper); box-shadow: none; }
+    .hero { padding: 70px 0 45px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; color: var(--gold); font-size: 10px; font-weight: 700; letter-spacing: 1.8px; }
+    .eyebrow::before { width: 25px; height: 1px; background: var(--gold); content: ""; }
+    h1,h2,h3 { font-family: "Space Grotesk", sans-serif; }
+    h1 { max-width: 800px; margin: 13px 0 17px; font-size: clamp(42px, 7vw, 68px); line-height: 1.02; }
+    h1 span { color: #eabf63; }
+    .hero-copy { max-width: 670px; margin: 0; color: #d0cbc5; font-size: 15px; line-height: 1.8; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 25px; }
+    .external-note { margin: 13px 0 0; color: #8e8984; font-size: 10px; }
+    .quick-facts { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); margin: 38px 0 0; border-block: 1px solid var(--line); }
+    .fact { padding: 17px 20px; border-right: 1px solid var(--line); }
+    .fact:first-child { padding-left: 0; }
+    .fact:last-child { border-right: 0; }
+    .fact strong { display: block; color: #f4e5c1; font: 700 23px "Space Grotesk", sans-serif; }
+    .fact span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .section { padding: 57px 0; border-top: 1px solid rgba(255,255,255,.07); }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 25px; }
+    .section-head h2 { margin: 8px 0 0; font-size: clamp(28px, 4vw, 39px); line-height: 1.1; }
+    .section-head > p { max-width: 390px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .checks { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; }
+    .check { min-height: 205px; padding: 21px; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012)); }
+    .check-number { color: #eaa6a4; font: 600 11px "Space Grotesk", sans-serif; }
+    .check h3 { margin: 22px 0 9px; font-size: 17px; }
+    .check p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
+    .categories { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+    .category { min-height: 115px; padding: 17px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .category strong { display: block; font: 600 13px "Space Grotesk", sans-serif; }
+    .category span { display: inline-block; margin-top: 8px; color: var(--gold); font-size: 10px; }
+    .category p { margin: 6px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .dns-note { display: grid; grid-template-columns: 1fr minmax(230px,.55fr); gap: 30px; padding: 25px; border: 1px solid rgba(223,175,75,.25); border-radius: 12px; background: linear-gradient(120deg,rgba(126,28,31,.2),rgba(226,183,87,.045)); }
+    .dns-note h2 { margin: 0 0 13px; font-size: 23px; }
+    .dns-note p { margin: 0 0 12px; color: #c7c1ba; font-size: 12px; line-height: 1.75; }
+    .dns-note p:last-child { margin-bottom: 0; }
+    .dns-aside { align-self: center; padding-left: 20px; border-left: 1px solid var(--line); color: #e9d5a6; font-size: 12px; line-height: 1.7; }
+    .attribution { padding: 20px 0 34px; border-top: 1px solid var(--line); color: #918b85; font-size: 10px; }
+    .attribution-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+    .footer-links a { color: #c8c1b9; text-decoration: none; }
+    .footer-links a:hover { color: var(--gold); }
+    @media (max-width: 760px) {
+      .wrap { width: min(100% - 34px, 600px); }
+      .topbar-inner { min-height: 68px; flex-wrap: wrap; padding-block: 10px; }
+      .nav { width: 100%; order: 3; gap: 16px; overflow-x: auto; padding: 3px 0; }
+      .topbar-inner > .button { margin-left: auto; }
+      .hero { padding: 48px 0 35px; }
+      .quick-facts { grid-template-columns: 1fr; }
+      .fact,.fact:first-child { padding: 13px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .fact:last-child { border-bottom: 0; }
+      .section { padding: 45px 0; }
+      .section-head { display: block; }
+      .section-head > p { margin-top: 12px; }
+      .checks { grid-template-columns: 1fr; }
+      .check { min-height: 0; }
+      .check h3 { margin-top: 13px; }
+      .categories { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .dns-note { grid-template-columns: 1fr; }
+      .dns-aside { padding: 14px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+      .attribution-inner { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 420px) {
+      .wrap { width: calc(100% - 28px); }
+      .brand img { width: 37px; height: 42px; }
+      .brand strong { font-size: 13px; }
+      .topbar-inner > .button { min-height: 37px; padding-inline: 12px; font-size: 10px; }
+      .hero-actions .button { flex: 1 1 100%; }
+      .categories { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { *,*::before,*::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html" aria-label="Discord Protect, accueil">
+        <img src="extension/assets/discord-protect-logo.png" alt="">
+        <span><strong>Discord Protect</strong><small>GUIDE DE TEST NAVIGATEUR</small></span>
+      </a>
+      <a class="button" href="https://adblock.turtlecute.org/" target="_blank" rel="noopener noreferrer">Lancer le test officiel <span aria-hidden="true">↗</span></a>
+      <nav class="nav" aria-label="Navigation">
+        <a href="index.html">Accueil</a>
+        <a href="#verifications">Vérifications</a>
+        <a href="#categories">Catégories</a>
+        <a href="#dns">Filtres DNS</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">OUTIL EXTERNE · GRATUIT</p>
+        <h1>Votre bloqueur tient-il <span>la ligne&nbsp;?</span></h1>
+        <p class="hero-copy">AdBlockTest vérifie depuis votre navigateur si les filtres cosmétiques, le blocage de scripts et votre filtre DNS arrêtent leurs cibles de test. Les résultats sont calculés par le site officiel; cette page Discord Protect ne lance ni ne simule les vérifications.</p>
+        <div class="hero-actions">
+          <a class="button" href="https://adblock.turtlecute.org/" target="_blank" rel="noopener noreferrer">Ouvrir AdBlockTest <span aria-hidden="true">↗</span></a>
+          <a class="button secondary" href="https://github.com/Turtlecute33/adblocktest" target="_blank" rel="noopener noreferrer">Voir le code source <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="external-note">Le test s’ouvre dans un nouvel onglet. Discord Protect ne reçoit pas votre score.</p>
+        <div class="quick-facts" aria-label="Structure du test">
+          <div class="fact"><strong>3 catégories</strong><span>Cosmétique, scripts et hôtes</span></div>
+          <div class="fact"><strong>128 hôtes</strong><span>Services publicitaires et de mesure</span></div>
+          <div class="fact"><strong>0 vraie pub</strong><span>Éléments de test et scripts leurres</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="verifications">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="eyebrow">COMMENT LE TEST FONCTIONNE</p><h2>Trois contrôles indépendants</h2></div>
+          <p>Le résultat dépend des fonctions du bloqueur et des règles réseau de votre configuration. Un VPN ou un filtre DNS ne remplace pas les filtres cosmétiques.</p>
+        </div>
+        <div class="checks">
+          <article class="check"><span class="check-number">01 / DOM</span><h3>Filtres cosmétiques</h3><p>Deux faux emplacements publicitaires, dont un ajouté après le chargement, servent à vérifier si le contenu est masqué ou retiré.</p></article>
+          <article class="check"><span class="check-number">02 / SCRIPTS</span><h3>Chargement des scripts</h3><p>Des fichiers leurres nommés <code>ads.js</code> et <code>pagead.js</code> vérifient si les règles du navigateur empêchent leur exécution.</p></article>
+          <article class="check"><span class="check-number">03 / DNS</span><h3>Blocage des hôtes</h3><p>Des domaines de publicité, d’analytics, de réseaux sociaux et de télémétrie mesurent le filtrage par l’extension, le DNS ou le réseau.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="categories">
+      <div class="wrap">
+        <div class="section-head">
+          <div><p class="eyebrow">COUVERTURE DES HÔTES</p><h2>Les familles vérifiées</h2></div>
+          <p>Les nombres ci-dessous correspondent aux groupes annoncés par le projet AdBlockTest.</p>
+        </div>
+        <div class="categories">
+          <article class="category"><strong>Réseaux publicitaires</strong><span>20 hôtes</span><p>Amazon, Google Ads, DoubleClick, Adcolony, Media.net</p></article>
+          <article class="category"><strong>Analytics et mesure</strong><span>30 hôtes</span><p>Google Analytics, Hotjar, MouseFlow, FreshWorks, Lucky Orange</p></article>
+          <article class="category"><strong>Rapports d’erreurs</strong><span>6 hôtes</span><p>Bugsnag, Sentry</p></article>
+          <article class="category"><strong>Réseaux sociaux</strong><span>19 hôtes</span><p>Facebook, X, LinkedIn, Pinterest, Reddit, YouTube, TikTok</p></article>
+          <article class="category"><strong>Réseaux mixtes</strong><span>19 hôtes</span><p>Yahoo, Yandex, Unity</p></article>
+          <article class="category"><strong>Télémétrie fabricants</strong><span>34 hôtes</span><p>Realme, Xiaomi, Oppo, Huawei, OnePlus, Samsung, Apple</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dns">
+      <div class="wrap">
+        <div class="dns-note">
+          <div>
+            <p class="eyebrow">LIRE LE SCORE AVEC CONTEXTE</p>
+            <h2>Un filtre DNS seul ne fait pas le même travail qu’une extension.</h2>
+            <p>Pi-hole, AdGuard Home, NextDNS et les autres résolveurs filtrent les noms d’hôtes. Ils ne peuvent pas retirer un élément déjà dessiné dans la page ni empêcher à eux seuls un script de s’exécuter dans le navigateur.</p>
+            <p>Le guide AdBlockTest indique qu’un score DNS seul autour de 40 à 60 % peut être normal. Pour évaluer ce type de configuration, regardez surtout la catégorie des hôtes plutôt que le score global.</p>
+            <p>Un portail de blocage renvoyé à la place d’un domaine peut aussi être interprété par un test comme une réponse réussie. Le projet recommande un mode de blocage de type NXDOMAIN ou NULL.</p>
+          </div>
+          <aside class="dns-aside">Pour couvrir les hôtes, les scripts et les éléments de page, combinez selon vos besoins un filtrage DNS et une extension de navigateur. Aucun outil ne garantit un score parfait sur tous les sites.</aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="attribution">
+    <div class="wrap attribution-inner">
+      <span>Test tiers créé par Turtlecute. Les résultats et vérifications appartiennent au site officiel.</span>
+      <nav class="footer-links" aria-label="Liens externes">
+        <a href="https://adblock.turtlecute.org/#" target="_blank" rel="noopener noreferrer">Support</a>
+        <a href="https://github.com/Turtlecute33/adblocktest" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">Licence du projet</a>
+        <a href="index.html">Retour à Discord Protect</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
