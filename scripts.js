@@ -1,6 +1,6 @@
 // Replace these values with your published store, bot invite, and support URLs.
 const DP_CONFIG = {
-  extensionStoreUrl: "",
+  extensionStoreUrl: "https://github.com/bot471912-dot/discordProtect/releases/latest/download/DiscordProtect.zip",
   botInviteUrl: "",
   supportInviteUrl: ""
 };
@@ -92,8 +92,15 @@ function renderExtensionState(connected, state) {
     return;
   }
   status.textContent = state.protectionEnabled ? "Extension connectée · protection active" : "Extension connectée · protection en pause";
-  const cookieState = state.cookiePopupEnabled ? "Masquage des popups cookies actif." : "Masquage des popups cookies en pause.";
-  count.textContent = `${new Intl.NumberFormat("fr-FR").format(state.blockedToday)} action(s) de protection aujourd’hui sur cet appareil. ${cookieState}`;
+  const features = [
+    ["Publicités et traceurs", state.protectionEnabled],
+    ["Popups cookies", state.cookiePopupEnabled],
+    ["Anti-tracking", state.antiTrackingEnabled],
+    ["Outils Discord", state.discordToolsEnabled],
+    ["Anti-Rickroll", state.antiRickrollEnabled],
+    ["Mode Productivité", state.productivityModeEnabled]
+  ].map(([name, active]) => `${name} ${active ? "actif" : "désactivé"}`);
+  count.textContent = `${new Intl.NumberFormat("fr-FR").format(state.blockedToday)} action(s) de protection aujourd’hui sur cet appareil. ${features.join(" · ")}.`;
 }
 
 function pingExtension() {
@@ -118,6 +125,10 @@ window.addEventListener("message", (event) => {
   renderExtensionState(true, {
     protectionEnabled: Boolean(message.protectionEnabled),
     cookiePopupEnabled: Boolean(message.cookiePopupEnabled),
+    antiTrackingEnabled: Boolean(message.antiTrackingEnabled),
+    discordToolsEnabled: Boolean(message.discordToolsEnabled),
+    antiRickrollEnabled: Boolean(message.antiRickrollEnabled),
+    productivityModeEnabled: Boolean(message.productivityModeEnabled),
     blockedToday: Number(message.blockedToday) || 0
   });
 });
